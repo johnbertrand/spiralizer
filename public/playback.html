@@ -1,0 +1,341 @@
+<html>
+
+<head>
+
+
+
+<script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
+<script src="https://code.createjs.com/tweenjs-0.6.2.min.js"></script>
+<script src="https://code.createjs.com/preloadjs-0.6.2.min.js"></script>
+
+
+
+
+<script>
+
+var START_X = 500;
+var START_Y = 500;
+
+var canvasID="mainCanvas";
+
+var originalBitmap;
+
+var currentFrame;
+
+var tmp;
+
+var stage;
+
+var spirals = [] ;
+
+var spiral;
+
+var spiralEvents = [];
+
+var startTime;
+
+var tickHandler;
+
+var spiraledJson;
+
+
+
+var playbackEvents = [];
+
+
+if(typeof(String.prototype.trim) === "undefined")
+{
+    String.prototype.trim = function() 
+    {
+        return String(this).replace(/^\s+|\s+$/g, '');
+    };
+}
+
+
+
+
+///SpiralEvent Object
+function SpiralEvent(imgUrl,x,y,eventTime){
+	this.imgUrl = imgUrl;
+	this.x = x;
+	this.y = y;
+	this.eventTime = eventTime;
+}
+
+
+function Spiral(spiralEvent){
+	this.bitmap = spiralEvent.imgUrl;
+	this.x = spiralEvent.x;
+	this.y = spiralEvent.y;
+}
+
+function Spiral(x,y){
+	this.bitmap = originalBitmap.clone();
+	this.x = x;
+	this.y = y;
+	
+}
+
+//Image Object
+function Spiral(bitmap,x,y){
+  
+  this.bitmap = bitmap;
+  this.angle = 0 ;
+  this.x = x;
+  this.y = y;
+  
+}
+
+
+Spiral.prototype.bitmap = function(){
+	return this.bitmap;
+}
+
+Spiral.prototype.name = function(){
+  return this.bitmap.image.src;
+}
+
+Spiral.prototype.update = function(){
+	//this.bitmap.image.width/2, this.bitmap.image.height/2
+	this.bitmap.setTransform(this.x, this.y, this.bitmap.scaleX * .9995, this.bitmap.scaleX * .9995, this.angle-= .14 );
+	//console.log (this.bitmap.scaleX +","+this.bitmap.scaleY )
+}
+
+Spiral.prototype.getRand=function(){
+ return Math.floor(Math.random() * (3)) + 0;
+}
+
+///End Image Object
+
+
+
+function tick(event) {
+
+	//copy current frame 
+	//shrink current frame
+	//paste current frame on to self
+	//stage.addChild(currentFrame);
+	
+	//currentFrame.update();
+	
+	
+	var i=0;
+	for (i=0;i<spirals.length;i++){
+		spirals[i].update();
+		
+	}
+	stage.update();
+
+}
+
+function playBack(event) {
+	console.log('in playback');
+	var n = new Date();
+	
+	console.log('playbackEvents.length: '+playbackEvents.length );
+	
+	if (playbackEvents.length > 0) {
+		console.log(playbackEvents[0].eventTime);
+		var tx = n.getTime() - startTime;
+		console.log("tx: "+ tx);
+		if (playbackEvents[0].eventTime < n.getTime() - startTime){
+			var pe = playbackEvents.shift();
+			
+			spirals.push(new Spiral(originalBitmap.clone() ,pe.x, pe.y));
+			stage.addChild(spirals[spirals.length-1].bitmap);
+		}
+		
+	}
+	
+	
+	console.log('spirals ');
+	console.log(spirals);
+	
+	var i=0;
+	for (i=0;i<spirals.length;i++){
+		spirals[i].update();
+	}
+	
+	stage.update();
+
+}
+
+
+function handleFileComplete(ev) {
+	
+	originalBitmap =  new createjs.Bitmap(ev.result);
+	
+	spirals.push(new Spiral(originalBitmap.clone(),START_X,START_Y));
+	
+	spiralEvents.push(new SpiralEvent("DUMMY",START_X,START_Y,0));
+	
+	stage.addChild(spirals[length].bitmap);
+	
+
+    tickHandler = createjs.Ticker.on("tick", tick);
+    createjs.Ticker.setFPS(60);
+	
+	var d = new Date();
+	startTime = d.getTime();
+	
+}
+
+
+function exportSpirals(){
+	
+	console.log("exporting");
+	spiraledJson = document.getElementById('out').value  = JSON.stringify(spiralEvents);
+	console.log(spiralEvents);
+}
+
+function importSpirals(){
+	console.log("Importing");
+	
+	//Kill Old Ticker
+	createjs.Ticker.off("tick",tickHandler);
+	
+	//Clean up
+	stage.clear();
+	spiralEvents=[];
+	spirals=[];
+	
+	
+	console.log("Parsing");
+	var parsed = JSON.parse(document.getElementById('out').value.trim()); //Change to texst box
+	
+	console.log(parsed);
+	console.log('looping');
+	
+	var i = 0;
+	while (i < parsed.length -1 ){
+	    playbackEvents.push(new SpiralEvent(parsed[i].imgUrl,parsed[i].x,parsed[i].y,parsed[i].eventTime))	;
+		i = i + 1;
+	}
+	
+	console.log(playbackEvents);
+	
+	var d = new Date();
+	startTime = d.getTime();
+    tickHandler = createjs.Ticker.on("tick", playBack);
+    createjs.Ticker.setFPS(60);
+	
+}
+
+
+function init()
+{
+	
+	canvas = document.getElementById(canvasID);
+    canvas.width  = document.body.clientWidth; 
+    canvas.height = document.body.clientHeight;
+
+    stage  = new createjs.Stage(canvasID);
+	stage.autoClear = false;
+	
+	
+    var preload = new createjs.LoadQueue();
+    preload.addEventListener("fileload", handleFileComplete);
+  	preload.loadFile({ src:"http://localhost:3000/flower.jpg", type:createjs.AbstractLoader.IMAGE});
+	
+	stage.on("stagemousedown", function(evt) {
+		
+    	//console.log("the canvas was clicked at "+evt.stageX+","+evt.stageY);
+		
+		spirals.push(new Spiral(originalBitmap.clone() ,evt.stageX,evt.stageY));
+	
+		stage.addChild(spirals[spirals.length-1].bitmap);
+		
+		var n = new Date();
+		
+		spiralEvents.push(new SpiralEvent("DUMMY",evt.stageX,evt.stageY,n.getTime()-startTime));
+		
+		console.log(spiralEvents);
+    });
+
+
+	
+
+
+  
+	
+
+}
+
+
+
+
+</script>
+
+<style>
+html,body{ margin:0; 
+	       padding:0; 
+		   height:100%;
+		   width:100%; }
+
+#full-size{
+  height:100%;
+  width:100%;
+  overflow:hidden; 
+  background-color: #00FF00; 
+  
+}
+
+	  .box1{
+			  width:10px; 
+			  height:20px; 
+		  }
+			   
+	.box2 { pointer-events:none;
+		    background:#FFF;  
+		    position:relative; 
+			z-index:2; 
+		   	margin: 0 auto; 
+			width:10%;
+			top: 25%;
+			opacity:0.5;
+		   
+		   } 
+     
+	   	.box3 { pointer-events:none;
+	   		    position:relative; 
+	   			z-index:3; 
+	   		   	margin: 0 auto; 
+	   			width:10%;
+	   			top: 25%;
+			  } 
+	
+			  button, textarea {
+				  pointer-events:all;
+			  }
+			  
+
+</style>
+
+</head>
+
+<body onload="init();" >
+	
+		
+		<div class="box1" >
+			<canvas id="mainCanvas">
+		</canvas> 
+	   </div>
+		
+		<div class="box2"  >xxxxx
+		  <div class="button" >
+		   <button onclick="exportSpirals()">Export</button>
+		  </div>
+		  <div class="button" >
+		   <button onclick="importSpirals()">Import</button>
+		  </div>
+		</div>
+		
+		<div class="box3" id="output" ><H1>Spiralizer</H1>
+		<textarea id="out">
+			
+		</textarea>
+		</div>
+	
+</body>
+
+</html>

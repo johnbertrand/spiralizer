@@ -1,0 +1,150 @@
+<html>
+
+<head>
+
+
+
+<script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
+<script src="https://code.createjs.com/tweenjs-0.6.2.min.js"></script>
+<script src="https://code.createjs.com/preloadjs-0.6.2.min.js"></script>
+
+
+
+
+<script>
+
+var currentFrame;
+var frameBuffer;
+
+var stage;
+
+var rev=1;
+
+
+
+
+//Image Object
+function ImgObj(bitmap){
+  
+  this.bitmap = bitmap;
+  this.bitmap.x = 0;
+  this.angle = 0 ;
+  
+
+  console.log("X: "+this.bitmap.x );
+  console.log( "name: " + this.bitmap.x);
+}
+
+
+ImgObj.prototype.bitmap = function(){
+	return this.bitmap;
+}
+
+ImgObj.prototype.name = function(){
+  return this.bitmap.image.src;
+}
+
+ImgObj.prototype.update = function(){
+	
+	
+	
+	this.bitmap.setTransform(this.bitmap.image.width/2, this.bitmap.image.height/2, this.bitmap.scaleX * .999995, this.bitmap.scaleX * .999995, this.angle-= .11 );
+	
+//	this.bitmap.scaleX = this.bitmap.scaleX * .9;
+//	this.bitmap.scaleY = this.bitmap.scaleY * .9;
+	console.log (this.bitmap.scaleX +","+this.bitmap.scaleY )
+}
+
+///End Image Object
+
+
+
+
+function tick(event) {
+
+	//copy current frame 
+	//shrink current frame
+	//paste current frame on to self
+	//stage.addChild(currentFrame);
+	
+	currentFrame.update();
+	//stage.addChild(currentFrame.bitmap.clone());
+	//frameBuffer = new  ImgObj(currentFrame.bitmap.clone());
+	//frameBuffer.update();
+	//stage.addChild(frameBuffer.bitmap);
+	stage.update();
+	
+	
+
+	
+    
+	
+	
+	
+	
+
+}
+
+
+function handleFileComplete(ev) {
+	currentFrame = new ImgObj(new createjs.Bitmap(ev.result));
+	
+	stage.addChild(currentFrame.bitmap);
+	
+	
+    createjs.Ticker.on("tick", tick);
+    createjs.Ticker.setFPS(3000);
+	
+}
+
+
+
+
+function init()
+{
+	var canvasID="mainCanvas";
+	
+	canvas = document.getElementById(canvasID);
+    canvas.width  = document.body.clientWidth; 
+    canvas.height = document.body.clientHeight;
+
+    stage  = new createjs.Stage(canvasID);
+	stage.autoClear = false;
+	
+	stage.click = function(MouseEvent event){
+		
+		var x = event.stageX;
+		var y = event.stageY;
+		
+	}
+	
+
+
+    var preload = new createjs.LoadQueue();
+    preload.addEventListener("fileload", handleFileComplete);
+  	preload.loadFile({ src:"http://localhost:3000/frame1.jpg", type:createjs.AbstractLoader.IMAGE});
+
+
+
+
+	
+	
+
+    
+	
+}
+
+
+</script>
+
+
+</head>
+
+<body onload="init();" >
+<canvas id="mainCanvas">
+
+</canvas>
+
+</body>
+
+</html>

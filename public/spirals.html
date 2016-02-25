@@ -1,0 +1,160 @@
+<html>
+
+<head>
+
+
+
+<script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
+<script src="https://code.createjs.com/tweenjs-0.6.2.min.js"></script>
+<script src="https://code.createjs.com/preloadjs-0.6.2.min.js"></script>
+
+
+
+
+<script>
+
+var canvasID="mainCanvas";
+
+var originalBitmap;
+
+var currentFrame;
+
+var tmp;
+
+var stage;
+
+var spirals = [] ;
+
+var spiral;
+
+//Image Object
+function ImgObj(bitmap,x,y){
+  
+  this.bitmap = bitmap;
+  this.bitmap.x = 0;
+  this.angle = 0 ;
+  this.x = x;
+  this.y = y;
+  
+  console.log("New ImgObj");
+  console.log( "name: " + this.name());
+}
+
+
+ImgObj.prototype.bitmap = function(){
+	return this.bitmap;
+}
+
+ImgObj.prototype.name = function(){
+  return this.bitmap.image.src;
+}
+
+ImgObj.prototype.update = function(){
+	//this.bitmap.image.width/2, this.bitmap.image.height/2
+	this.bitmap.setTransform(this.x, this.y, this.bitmap.scaleX * .9995, this.bitmap.scaleX * .9995, this.angle-= .14 );
+	//console.log (this.bitmap.scaleX +","+this.bitmap.scaleY )
+}
+
+ImgObj.prototype.getRand=function(){
+ return Math.floor(Math.random() * (3)) + 0;
+}
+
+///End Image Object
+
+
+
+
+function tick(event) {
+
+	//copy current frame 
+	//shrink current frame
+	//paste current frame on to self
+	//stage.addChild(currentFrame);
+	
+	//currentFrame.update();
+	
+	
+	var i=0;
+	for (i=0;i<spirals.length;i++){
+		spirals[i].update();
+		
+	}
+	stage.update();
+
+}
+
+
+function handleFileComplete(ev) {
+	originalBitmap =  new createjs.Bitmap(ev.result);
+	
+	console.log(originalBitmap);
+	
+	spirals.push(new ImgObj(originalBitmap.clone(),500,500));
+	stage.addChild(spirals[length].bitmap);
+	
+	console.log("---");
+	console.log(spirals);
+	//currentFrame = new ImgObj(new createjs.Bitmap(ev.result));
+	
+    createjs.Ticker.on("tick", tick);
+    createjs.Ticker.setFPS(60);
+	
+}
+
+
+
+
+function init()
+{
+	
+	canvas = document.getElementById(canvasID);
+    canvas.width  = document.body.clientWidth; 
+    canvas.height = document.body.clientHeight;
+
+    stage  = new createjs.Stage(canvasID);
+	stage.autoClear = false;
+	
+	stage.on("stagemousedown", function(evt) {
+    	console.log("the canvas was clicked at "+evt.stageX+","+evt.stageY);
+		
+		spirals.push(new ImgObj(originalBitmap.clone() ,evt.stageX,evt.stageY));
+		console.log("----");
+		console.log(spirals);
+		console.log("---");
+		console.log(spirals[spirals.length]);
+		stage.addChild(spirals[spirals.length-1].bitmap);
+		
+    });
+
+
+	
+
+
+    var preload = new createjs.LoadQueue();
+    preload.addEventListener("fileload", handleFileComplete);
+  	preload.loadFile({ src:"http://localhost:3000/flower.jpg", type:createjs.AbstractLoader.IMAGE});
+
+
+
+
+	
+	
+
+    
+	
+}
+
+
+</script>
+
+
+</head>
+
+<body onload="init();" >
+<canvas id="mainCanvas">
+
+</canvas>
+
+</body>
+
+</html>
