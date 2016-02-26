@@ -38,8 +38,6 @@ var tickHandler;
 
 var spiraledJson;
 
-
-
 var playbackEvents = [];
 
 
@@ -63,18 +61,6 @@ function SpiralEvent(imgUrl,x,y,eventTime){
 }
 
 
-function Spiral(spiralEvent){
-	this.bitmap = spiralEvent.imgUrl;
-	this.x = spiralEvent.x;
-	this.y = spiralEvent.y;
-}
-
-function Spiral(x,y){
-	this.bitmap = originalBitmap.clone();
-	this.x = x;
-	this.y = y;
-	
-}
 
 //Image Object
 function Spiral(bitmap,x,y){
@@ -129,10 +115,7 @@ function tick(event) {
 }
 
 function playBack(event) {
-	console.log('in playback');
 	var n = new Date();
-	
-	console.log('playbackEvents.length: '+playbackEvents.length );
 	
 	if (playbackEvents.length > 0) {
 		console.log(playbackEvents[0].eventTime);
