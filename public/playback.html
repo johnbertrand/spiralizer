@@ -176,6 +176,7 @@ function importSpirals(){
 	
 	//Kill Old Ticker
 	createjs.Ticker.off("tick",tickHandler);
+	createjs.Ticker.off("tick", playBack);
 	
 	//Clean up
 	stage.clear();
@@ -183,17 +184,18 @@ function importSpirals(){
 	spirals=[];
 	
 	
-	console.log("Parsing");
+	//Read the json of the spiral evetns from the textbo
 	var parsed = JSON.parse(document.getElementById('out').value.trim()); //Change to texst box
-	
 	console.log(parsed);
-	console.log('looping');
 	
-	var i = 0;
-	while (i < parsed.length -1 ){
-	    playbackEvents.push(new SpiralEvent(parsed[i].imgUrl,parsed[i].x,parsed[i].y,parsed[i].eventTime))	;
-		i = i + 1;
-	}
+	console.log('looping');
+	playbackEvents =parsed;
+
+	//var i = 0;
+	//while (i < parsed.length -1 ){
+	//    playbackEvents.push(new SpiralEvent(parsed[i].imgUrl,parsed[i].x,parsed[i].y,parsed[i].eventTime))	;
+	//	i = i + 1;
+//	}
 	
 	console.log(playbackEvents);
 	
