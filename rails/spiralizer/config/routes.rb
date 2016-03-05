@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   
-  devise_for :users
+  devise_for :users, :controllers => {sessions: 'sessions'}
   
   get 'user/profile' => 'user#profile'
   get 'user/edit'    => 'user#edit'
