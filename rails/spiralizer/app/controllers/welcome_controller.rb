@@ -1,7 +1,12 @@
 class WelcomeController < ApplicationController
+
+  
   layout false
   layout 'application', :except => :responsive
     
+    
+ 
+  
   def index
   end
 
@@ -9,6 +14,9 @@ class WelcomeController < ApplicationController
   end
   
   def foo
+  end
+  
+  def evan
   end
   
 end
