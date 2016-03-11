@@ -21,7 +21,7 @@ Rails.application.routes.draw do
   
   post 'spirals/create' => 'spirals#create'
   
-  get 'users/:id/spirals' => 'users#spirals', :as => :user_spirals
+  get 'users/:id/spirals' => 'user#spirals', :as => :user_spirals
   
 end
 

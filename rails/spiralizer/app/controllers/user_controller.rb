@@ -12,9 +12,10 @@ class UserController < ApplicationController
     
   end
   
-  def posts
+  def spirals
       @user = User.find(params[:id])
-      @posts = @user.posts
+      @spirals = @user.spirals
+      render @spirals
   end
  
   

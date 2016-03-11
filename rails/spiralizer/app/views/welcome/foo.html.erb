@@ -299,17 +299,22 @@
 					  height:20px; 
 				  }
 			   
-			.box2 { pointer-events:none;
+			.main_menu { 
+				    pointer-events:none;
 				    background:#FFF;  
 				    position:relative; 
 					z-index:2; 
-				   	padding: 1003; 
 					width:100%;
-					top: 50%;
+					top:10%;
 					opacity:0.5;
-		   
-				   } 
-     
+					} 
+					
+			.main_menu_header{
+				   	background:#000;
+					opacity:1;
+					color: white;
+			 }
+				   
 			   	.box3 { pointer-events:none;
 			   		    position:relative; 
 			   			z-index:3; 
@@ -337,7 +342,7 @@
 		
   </head>
 
-  <body onload="init();" >
+  <body onload="init();" data-user-id="<%= current_user.id %>">
 
     <!-- Fixed navbar -->
     <nav class="navbar navbar-default navbar-fixed-top">
@@ -447,22 +452,18 @@
 		       </ul>
         </div><!--/.nav-collapse -->
       </div>
+	  
     </nav>
-
-    <div>
 	
 	<div class="box1" ><canvas id="mainCanvas"></canvas></div>
-   
     
-	<div class="box3" id="output" > HELLO</div>
-		<div class="box2" id="output2" > HELLOHELLOHELLOHELLOHELLO
-		HELLOHELLOHELLO
-	HELLOHELLOHELLOHELLO
-	HELLOHELLOHELLOHELLO
-
-	</div>
 	
-    </div> 
+ 
+   
+
+        
+		
+	
 
     
   </body>

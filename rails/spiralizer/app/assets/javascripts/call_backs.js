@@ -1,4 +1,9 @@
 $(document).on('ready page:load',function(){
+	
+	
+	
+
+
 	$("#save_spirals").click(function() {
   	  	var jqxhr = $.ajax({ type:'POST', url:'spirals/',data:{ name: "John", time: "2pm" }})
 		.done(function(){
@@ -9,7 +14,9 @@ $(document).on('ready page:load',function(){
 	
 	
  	$("#list_spirals").click(function() {
- 		var jqxhr = $.ajax({ type:'GET', url:'users/:id/spirals'})
+		console.log("CALLING LIST_SPIRALS");
+		var user_id = document.getElementsByTagName("BODY")[0].getAttribute("data-user-id");
+ 		var jqxhr = $.ajax({ type:'GET', url:'users/'+user_id+'/spirals'})
  		.done(function(){
  			alert('Success');
  		});
