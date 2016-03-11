@@ -1,11 +1,6 @@
 class WelcomeController < ApplicationController
-
-  
   layout false
-  layout 'application', :except => :responsive
-    
-    
- 
+  layout 'application', :except => :responsive 
   
   def index
   end

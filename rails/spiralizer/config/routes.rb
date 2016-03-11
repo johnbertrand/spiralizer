@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
-  
   devise_for :users, :controllers => {sessions: 'sessions'}
+  resources :spirals
   
   get 'user/profile' => 'user#profile'
   get 'user/edit'    => 'user#edit'
@@ -16,8 +16,13 @@ Rails.application.routes.draw do
 
   # You can have the root of your site routed with "root"
   root 'welcome#foo'
-   get 'welcome/foo'
-   get 'welcome/evan'
+  get 'welcome/foo'
+  get 'welcome/evan'
+  
+  post 'spirals/create' => 'spirals#create'
+  
+  get 'users/:id/spirals' => 'users#spirals', :as => :user_spirals
+  
 end
 
   

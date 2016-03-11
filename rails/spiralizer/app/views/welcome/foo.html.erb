@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -11,12 +10,6 @@
     <link rel="icon" href="../../favicon.ico">
 
     <title>Spiralizer</title>
-
-  
-
-
-
-	   
 		<%= javascript_include_tag :defaults , 'data-turbolinks-track' => true%>
 		<%= csrf_meta_tag %>
 		
@@ -25,48 +18,27 @@
 		<script src="https://code.createjs.com/preloadjs-0.6.2.min.js"></script>
 
 
-
-
-		<script>
-		
-		
-	
-	
-	
-		var image_path = '<%= asset_path 'flower.jpg' %>'
+	<script>
+		var image_path = '<%= asset_path "flower.jpg" %>'
 		
 		var START_X = 500;
 		var START_Y = 500;
-
 		var canvasID="mainCanvas";
-
 		var originalBitmap;
-
 		var currentFrame;
-
 		var tmp;
-
 		var stage;
-
 		var spirals = [] ;
-
 		var spiral;
-
 		var spiralEvents = [];
-
 		var startTime;
-
 		var tickHandler;
-
 		var spiraledJson;
-
 		var playbackEvents = [];
 
 
-		if(typeof(String.prototype.trim) === "undefined")
-		{
-		    String.prototype.trim = function() 
-		    {
+		if(typeof(String.prototype.trim) === "undefined"){
+		    String.prototype.trim = function() {
 		        return String(this).replace(/^\s+|\s+$/g, '');
 		    };
 		}
@@ -169,22 +141,16 @@
 
 
 		function handleFileComplete(ev) {
-	
 			originalBitmap =  new createjs.Bitmap(ev.result);
-	
 			spirals.push(new Spiral(originalBitmap.clone(),START_X,START_Y));
-	
 			spiralEvents.push(new SpiralEvent("DUMMY",START_X,START_Y,0));
-	
 			stage.addChild(spirals[length].bitmap);
 	
-
-		    tickHandler = createjs.Ticker.on("tick", tick);
+			tickHandler = createjs.Ticker.on("tick", tick);
 		    createjs.Ticker.setFPS(60);
 	
 			var d = new Date();
 			startTime = d.getTime();
-	
 		}
 
 
@@ -337,9 +303,9 @@
 				    background:#FFF;  
 				    position:relative; 
 					z-index:2; 
-				   	margin: 0 auto; 
+				   	padding: 1003; 
 					width:100%;
-					top: 25%;
+					top: 50%;
 					opacity:0.5;
 		   
 				   } 
@@ -351,6 +317,14 @@
 			   			width:10%;
 			   			top: 25%;
 					  } 
+					  
+	  			   	.box4 { pointer-events:none;
+	  			   		    position:relative; 
+	  			   			z-index:4; 
+	  			   		   	margin: 0 auto; 
+	  			   			width:100%;
+	  			   			height: 100%;
+	  					  } 
 	
 					  button, a{
 						  pointer-events:all;
@@ -394,6 +368,11 @@
               </ul>
             </li>
 			<li id="logged_in_menu">
+				<% if user_signed_in? %>
+					<%= render 'spirals_menu' %>
+				<% else %>
+				
+				<% end %>
 			</li>
           </ul>
 		  <ul class="nav navbar-nav navbar-right" id="user_area">
@@ -471,13 +450,18 @@
     </nav>
 
     <div>
-
+	
 	<div class="box1" ><canvas id="mainCanvas"></canvas></div>
    
-   
-	<div class="box3" id="output" ></div>
+    
+	<div class="box3" id="output" > HELLO</div>
+		<div class="box2" id="output2" > HELLOHELLOHELLOHELLOHELLO
+		HELLOHELLOHELLO
+	HELLOHELLOHELLOHELLO
+	HELLOHELLOHELLOHELLO
 
-
+	</div>
+	
     </div> 
 
     

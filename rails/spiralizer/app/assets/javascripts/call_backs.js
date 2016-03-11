@@ -1,4 +1,24 @@
 $(document).on('ready page:load',function(){
+	$("#save_spirals").click(function() {
+  	  	var jqxhr = $.ajax({ type:'POST', url:'spirals/',data:{ name: "John", time: "2pm" }})
+		.done(function(){
+			alert('Spiral Saved');
+		});
+		
+	 });
+	
+	
+ 	$("#list_spirals").click(function() {
+ 		var jqxhr = $.ajax({ type:'GET', url:'users/:id/spirals'})
+ 		.done(function(){
+ 			alert('Success');
+ 		});
+		
+ 	 });
+	
+	
+	
+	
    $("#new_user").on("ajax:success", function(e, data, status, xhr){
 	   //console.log(xhr.getAllResponseHeaders())})
 	   var csrf_param = xhr.getResponseHeader('X-CSRF-Param');
