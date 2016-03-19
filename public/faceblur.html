@@ -1,0 +1,260 @@
+<html>
+
+<head>
+
+
+
+<script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
+<script src="https://code.createjs.com/tweenjs-0.6.2.min.js"></script>
+<script src="https://code.createjs.com/preloadjs-0.6.2.min.js"></script>
+
+
+
+
+<script>
+
+var START_X = 500;
+var START_Y = 500;
+
+var canvasID="mainCanvas";
+var bufferCanvasID="bufferCanvas";
+
+var originalBitmap;
+
+var currentFrame;
+
+var tmp;
+
+var stage;
+var bufferStage;
+
+var startTime;
+var tickHandler;
+
+var currentSelection = new Selection();
+var croppedImage;
+
+function Point(x,y){
+	this.x = x;
+	this.y = y;
+}
+
+function Selection(x,y){
+	
+	this.startPoint = new Point(x,y);
+	this.endPoint   = new Point(0,0);
+
+}
+
+Selection.prototype.width = function(){
+	return Math.abs(this.startPoint.x - this.endPoint.x);
+}
+
+Selection.prototype.height	 = function(){
+	return Math.abs(this.startPoint.y - this.endPoint.y);
+}
+
+Selection.prototype.distanceFromZero=function(point){
+	var a = 0 - point.x
+	var b = 0 - point.y
+	return Math.sqrt( a*a + b*b );
+	
+}
+
+Selection.prototype.getStartingPoint = function(){
+	if (this.distanceFromZero(this.startPoint) < this.distanceFromZero(this.endPoint)){
+		return this.startPoint;
+	}
+	
+	return this.endPoint;
+	
+	
+	
+	
+}
+
+
+if(typeof(String.prototype.trim) === "undefined")
+{
+    String.prototype.trim = function() 
+    {
+        return String(this).replace(/^\s+|\s+$/g, '');
+    };
+}
+
+
+
+
+
+
+
+function handleFileComplete(ev) {
+	
+	originalBitmap =  new createjs.Bitmap(ev.result);
+	
+	
+	
+	stage.addChild(originalBitmap);
+	stage.update();
+	
+	
+	  
+	
+}
+
+
+
+
+
+function exportToBitmap(){
+	var canvas = document.getElementById( 'mainCanvas' );
+	var bitmap = new createjs.Bitmap( canvas );
+    
+	bitmap.cache( 0, 0, canvas.width, canvas.height, 1 );
+	var base64 = bitmap.getCacheDataURL();
+
+	myWindow = window.open(base64);
+	myWindow.focus();
+
+}
+
+
+function initBuffer(w,h){
+	bufferCanvas  = document.getElementById(canvasID);
+	bufferCanvas.width  = w;
+	bufferCanvas.height = h;
+	bufferStage = createjs.Stage(bufferCanvasID);
+}
+
+function crop(){
+	
+}
+
+function init()
+{
+	
+	canvas = document.getElementById(canvasID);
+    canvas.width  = document.body.clientWidth; 
+    canvas.height = document.body.clientHeight;
+
+    stage  = new createjs.Stage(canvasID);
+	stage.autoClear = false;
+	
+	
+    var preload = new createjs.LoadQueue();
+    preload.addEventListener("fileload", handleFileComplete);
+  	preload.loadFile({ src:"http://localhost:3000/IMG_4211.jpg", type:createjs.AbstractLoader.IMAGE});
+		
+	
+	
+	stage.on("stagemousedown", function(evt) {
+		
+		currentSelection = new Selection(evt.stageX, evt.stageY);
+		
+    });
+	
+	
+	
+	stage.on("stagemouseup", function(evt) {
+		    currentSelection.endPoint.x = evt.stageX;
+			currentSelection.endPoint.y = evt.stageY;
+			
+			console.log(evt.stageX+","+evt.stageY);
+			
+			var p = currentSelection.getStartingPoint();
+			console.log(p.x,p.y,currentSelection.width(),currentSelection.height());
+			
+			croppedImage = originalBitmap.clone();
+			
+			croppedImage.sourceRect = new createjs.Rectangle(p.x,p.y,currentSelection.width(),currentSelection.height() );
+			
+			var bounds  = croppedImage.getBounds();
+			
+		//	initBuffer(bounds.width,bounds.height);
+			
+			stage.addChild(croppedImage);
+			croppedImage.y=10;
+			stage.update();
+			
+			
+});
+	
+
+}
+
+
+
+
+</script>
+
+<style>
+html,body{ margin:0; 
+	       padding:0; 
+		   height:100%;
+		   width:100%; }
+
+#full-size{
+  height:100%;
+  width:100%;
+  overflow:hidden; 
+  background-color: #00FF00; 
+  
+}
+
+	  .box1{
+		  	 
+			  width:10px; 
+			  height:20px; 
+		  }
+			   
+	.box2 { pointer-events:none;
+		    background:#FFF;  
+		    position:relative; 
+			z-index:2; 
+		   	margin: 0 auto; 
+			width:100%;
+			top: 25%;
+			opacity:0.5;
+		   
+		   } 
+     
+	   	.box3 { pointer-events:none;
+	   		    position:relative; 
+	   			z-index:3; 
+	   		   	margin: 0 auto; 
+	   			width:10%;
+	   			top: 25%;
+			  } 
+	
+			  button{
+				  pointer-events:all;
+			  }
+			  
+			  
+			  .hiddenBuffer {
+				   visibility: hidden;
+				
+			  }
+
+</style>
+
+</head>
+
+<body onload="init();" >
+	
+		
+		<div class="box1" >
+			<canvas id="mainCanvas">
+		</canvas> 
+	   </div>
+	   
+	   
+	
+		
+		
+	<div class="hiddenBuffer">
+	     <canvas id="bufferCanvas"></canvas>
+	</div>
+</body>
+
+</html>
